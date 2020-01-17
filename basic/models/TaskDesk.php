@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 
 namespace app\models;
 use yii\base\Model;
 
 class TaskDesk extends Model {
     
-    //public $conTitle;
+   //public $conTitle;
     
     
     

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace app\controllers;
 
@@ -28,7 +28,7 @@ class TaskController extends Controller
         $model->order = 4;        
         
         if(!$model->validate()) {
-            var_dump($model->getErrors());exit();
+           var_dump($model->getErrors());exit();
         } else var_dump($model->validate());exit();
     }
     

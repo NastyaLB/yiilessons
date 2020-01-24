@@ -17,6 +17,7 @@ class m200120_201742_create_users_table extends Migration
             'login' => $this->string()->notNull(),
             'name' => $this->string()->notNull(),
             'password' => $this->string()->notNull(),
+            'email' => $this->string(),
         ]);
     }
 

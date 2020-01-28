@@ -38,7 +38,7 @@ class TaskAdminController extends Controller
         $searchModel = new TaskDBFilter();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->renderrender('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

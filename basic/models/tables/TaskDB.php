@@ -15,6 +15,8 @@ use Yii;
  * @property string|null $deadline
  * @property int|null $status_id
  * @property string status
+ * @property int|null $responsible
+ * @property int|null $creator
  */
 
 class TaskDB extends \yii\db\ActiveRecord
@@ -38,7 +40,7 @@ class TaskDB extends \yii\db\ActiveRecord
         return [
             [['title', 'description'], 'required'],
             [['creator_id', 'responsible_id', 'status_id'], 'integer'],
-            [['deadline'], 'safe'],
+            [['deadline', 'starttime', 'modifytime'], 'safe'],
             [['title', 'description'], 'string', 'max' => 255],
         ];
     }
@@ -63,7 +65,7 @@ class TaskDB extends \yii\db\ActiveRecord
     public function getStatus(){
         return 'stub';
         
-       // return Sthis->hasOne(TaskDB::class, ['id' => 'status_id']);
+       // return $this->hasOne(TaskDB::class, ['id' => 'status_id']);
     }
     
     
@@ -116,23 +118,15 @@ class TaskDB extends \yii\db\ActiveRecord
     }
     
     
-    //получение 1 задания из базы
-    public function sample1DB($id){
+    //получение имени исполнителя задания
+    public function getResponsible(){
         
-        $result = \Yii::$app->db->createCommand("select taskdb.id, taskdb.title, taskdb.description, taskdb.creator_id, usersdb.name, taskdb.responsible_id, taskdb.deadline, taskdb.status_id from taskdb join usersdb on usersdb.id = taskdb.responsible_id where taskdb.id = $id;")->queryOne();
+        return $this->hasOne(UsersDB::class, ['id' => 'responsible_id']);
+    }
+    
+    //получение имени создателя задания
+    public function getCreator(){
         
-        
-        $taskDB[$id] = [
-            'id' => $result['id'],
-            'title' => $result['title'],
-            'description' => $result['description'],
-            'creator' => 'Поляков И.',
-            'respon_id' => $result['responsible_id'],
-            'respon_name' => $result['name'].$id1,
-            'deadline' => $result['deadline'],
-            'status_id' => $result['status_id'],
-        ];
-        
-        return $taskDB; 
+        return $this->hasOne(UsersDB::class, ['id' => 'creator_id']);
     }
 }

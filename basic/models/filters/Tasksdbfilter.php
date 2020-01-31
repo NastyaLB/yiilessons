@@ -5,6 +5,7 @@ namespace app\models\filters;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\tables\TaskDB;
+use app\models\behaviors\MonthBetweenBehavior;
 
 /**
  * TaskDBFilter represents the model behind the search form of `app\models\tables\TaskDB`.
@@ -45,7 +46,7 @@ class Tasksdbfilter extends TaskDB
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query, 
            // 'pagination' => [ 'pageSize' => '3', ],
         ]);
 
@@ -68,6 +69,13 @@ class Tasksdbfilter extends TaskDB
 
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description]);
+        
+        //добавление фильтрации по месяцам
+        if($month = (int)\Yii::$app->request->get('month')) {
+            $monthes = MonthBetweenBehavior::run($month);
+            $query->where(['between', 'deadline', $monthes[0], $monthes[1]]);
+        } 
+        //конец добавления фильтрации по месяцам
 
         return $dataProvider;
     }

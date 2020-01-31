@@ -1,66 +1,62 @@
-﻿<?php
+<?php
 
 namespace app\models;
 use yii\base\Model;
+use app\models\tables\TaskDB;
+use app\models\tables\UsersDB;
 
 class TaskDesk extends Model {
     
-   //public $conTitle;
+    //public $conTitle;
     
     
-    
+    //формирование вывода страницы задач, передача ID для формирования контента в readTask
     public function TDform() {
         $id = \Yii::$app->request->get('id');
         
+        $ifID = \Yii::$app->db->createCommand("SELECT * FROM taskDb WHERE id=(:id);")->bindValues([':id' => $id])->queryScalar();
         
-        $taskdb = [
-            '0' => ['id'=>'1','tasktext'=>'Установить фреймворк. Проверить работоспособность демонстрационного приложения.','status'=>'1'],
-            '1'=>['id'=>'2','tasktext'=>'Сделать собственный контроллер с двумя экшенами - просмотр списка задач и просмотра карточки отдельной задачи. Пока на каждой странице выводить текст с кратким описанием того, что будет на этой странице в дальнейшем.','status'=>'1'],
-            '2'=>['id'=>'3','tasktext'=>'Создать свой собственный валидатор как отдельный класс','status'=>'0']
-        ];
-        
-        
-        if($id == 1) {
-            $taskdb0['0'] = $taskdb[$id-1];
-            $conTitle = ['title' => 'Задача1', 'content' => $this->readTask($taskdb0)];            
-        } elseif($id == 2) {
-            $taskdb0['0'] = $taskdb[$id-1];
-            $conTitle = ['title' => 'Задача2', 'content' => $this->readTask($taskdb0)];            
-        } elseif($id == 3) {
-            $taskdb0['0'] = $taskdb[$id-1];
-            $conTitle = ['title' => 'Задача3', 'content' => $this->readTask($taskdb0)];            
+        if($ifID) {
+            $ttask = 'Задача '.TaskDB::find()->select(title)->where("id = $id")->scalar();
+            $conTitle = ['title' => $ttask, 'content' => $this->readTask($id)];        
         } else {
-            $conTitle = ['title' => 'Список задач', 'content' => $this->readTask($taskdb)];
-        } 
+            $conTitle = ['title' => 'Список задач', 'content' => $this->readTask('All')];     
+       }
         
         return $conTitle;
     } 
     
-   public function readTask($taskdb) {
+    //формирование контента страницы задач или страницы задачи
+   public function readTask($id) {        
+       $conTitle ='<form action="" method="post"><ol';
        
-       $conTitle = '<form action="" method="post"><ol';
-       if(count($taskdb) == 1) {
-           $conTitle .= ' start="';
-           $conTitle .= $taskdb['0']['id'];
-           $conTitle .= ' start="';
+       if($id == 'All') {
+           $taskDB = \Yii::$app->db->createCommand('SELECT * FROM taskdb;')->queryAll();
+           $conTitle .= '>';
        }
-       $conTitle .= '>';
-       
-       foreach($taskdb as $k => $m) {
-               $conTitle .= '<li>';
-               $conTitle .= $m['tasktext'];
-               $conTitle .= $nbd;
-               $conTitle .= ' <input type="checkbox" ';
-               if($m['status'] == 1) $conTitle .= 'checked';  
-           
-               if(count($taskdb) > 1){
-                   $conTitle .= '> <a href="index.php?r=task&id='; 
-                   $conTitle .= $taskdb[$k]['id']; 
-                   $conTitle .= '">Перейти...</a';
-               }
-               $conTitle .= '></li>'; 
+       else {
+           $taskDB = \Yii::$app->db->createCommand("SELECT * FROM taskdb where id = $id;")->queryAll();
+           $conTitle .= ' start="';
+           $conTitle .= $taskDB[0][id];
+           $conTitle .= '">';
        }
        
+       foreach($taskDB as $k => $m) {
+           $d = substr($m[deadline], 0, -3);
+           $conTitle .= '<li>';
+           $conTitle .= $m[description];
+           $conTitle .= '</br><small>Создатель: ';
+           $conTitle .= TaskDB::findOne($m[creator_id])->creatorName;;
+           $conTitle .= ' Исполнитель: ';
+           $conTitle .= UsersDB::find()->select(name)->where("id = $m[responsible_id]")->scalar();
+           $conTitle .= ' Дедлайн: ';
+           $conTitle .= $d;
+           $conTitle .= ' </small><input type="checkbox" ';
+           if($m[status_id] == 1) $conTitle .= 'checked';
+           $conTitle .= '><a href=index.php?r=task&id=';
+           $conTitle .= $m[id];
+           $conTitle .= '>Перейти...</a></li>';
+       }
        $conTitle .= '</ol></form>';
        return $conTitle;
    }

@@ -49,20 +49,15 @@ class TaskModifyForm extends Model
             
             if( $taskdb->modifytime != $this->modifytime && !empty($this->modifytime)) {
                 
-                $taskdb = TaskDB::findOne($id); 
-                
-                //echo $taskdb->description.$this->description;
                 $taskdb->title = $this->title;
                 $taskdb->description = $this->description;
-                $taskdb->creator_id = $this->creator_id;
                 $taskdb->responsible_id = $this->responsible_id;
                 $taskdb->modifytime = $this->modifytime;
                 $taskdb->deadline = $this->deadline; 
                 $taskdb->save();
                 
-                
             } else  {
-                $taskdb = TaskDB::findOne([$id]);
+                
                 $this->id = $id;
                 $this->title = $taskdb->title;
                 $this->description = $taskdb->description;
@@ -77,8 +72,9 @@ class TaskModifyForm extends Model
                 $deadline = TimeRightBehavior::run($taskdb->deadline);
                 $this->deadline = $deadline;
                 $this->status_id = $taskdb->status_id;
+                
             }
-            
+            $this->messageTOuser = 'Вы просматриваете и можете изменить информацию по задаче: '.$this->title;
             
         } elseif (!$taskdb = TaskDB::findOne(['title' => $this->title])) {
             
@@ -94,13 +90,11 @@ class TaskModifyForm extends Model
                     'status_id' => '0',
                 ]);
                 
+                                
                 $taskdb->save();
                 $this->trigger(static::EVENT_TASK_SUCCESSFULLY_SAVED, $event);
-                //echo '$this->modifytime'.$this->modifytime.EVENT_TASK_SUCCESSFULLY_SAVED;
-                //var_dump($taskdb);
-                exit;
             }
-            
+            $this->messageTOuser = 'Сформируйте свою задачу: ';
         }
         
         //выпадающий список ответственных
@@ -109,8 +103,8 @@ class TaskModifyForm extends Model
             $res_list[$k+1] = $m;
         }
         $this->responsible_list = $res_list;
+        //конец фомирования списка ответственных
         
-        $this->messageTOuser = 'Вы просматриваете и можете изменить информацию по задаче: '.$this->title;
         return $taskdb;
         
     }

@@ -7,8 +7,10 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
+use app\models\RegForm;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\base\Event;
 
 class SiteController extends Controller
 {
@@ -84,6 +86,34 @@ class SiteController extends Controller
         return $this->render('login', [
             'model' => $model,
         ]);
+    }
+    /**
+     * Регистрация нового пользователя
+     */
+    public function actionRegistrate()
+    {
+        //
+
+        $model = new RegForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->createUser()) {
+            return $this->goHome();
+        } 
+
+        //$model->password = '';
+        return $this->render('registrate', [
+            'model' => $model,
+        ]);
+        
+        /*
+        $handler = function(Event $event) {echo'Пользователь подписан на рассылку!';};
+        $model->on(RegForm::EVENT_USER_SUCCESSFULLY_SAVED, $handler); 
+        //1:28
+            
+        $model->createUser();
+        
+        return $this->render('registrate', ['model' => $model,]);
+        */
     }
 
     /**

@@ -39,15 +39,8 @@ class Tasksdbfilter extends TaskDB
      * @return ActiveDataProvider
      */
     public function search($params)
-    {
-        $id = (int)\Yii::$app->request->get('id');
-        
-        if(isset($id) && $id != 0) {
-            $query = TaskDB::find()->where(['id' => $id]);            
-        } 
-        else $query = TaskDB::find();
-        
-                
+    { 
+        $query = TaskDB::find();
 
         // add conditions that should always apply here
 

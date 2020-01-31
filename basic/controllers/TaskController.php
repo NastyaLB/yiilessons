@@ -1,35 +1,28 @@
-﻿<?php
+<?php
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Lesson;
-use app\models\TaskDesk;
+use app\models\filters\Tasksdbfilter;
 use yii\web\Controller;
 use yii\db\ActiveRecord;
 
 class TaskController extends Controller
 {
         
-    public function actionIndex() {        
+    public function actionIndex() {   
         
-        $model = new TaskDesk();
-        
-        return $this->render('tasks',$model->TDform()); 
+        $model = new Tasksdbfilter();
+        $dataProvider = $model->search(\Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $model,
+            'dataProvider' => $dataProvider,]);
     }
     
-    
-    
-    //пример своей валидации с урока
-    public function actionLesson1() {        
-        
-        $model = new Lesson();
-        $model->name = 'Lesson1';
-        $model->description = 'Lesson1';
-        $model->order = 4;        
-        
-        if(!$model->validate()) {
-           var_dump($model->getErrors());exit();
-        } else var_dump($model->validate());exit();
+     
+    public function actionInfo(){
+        echo 'Раздел помощи';
     }
-    
 }

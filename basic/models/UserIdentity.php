@@ -3,7 +3,7 @@
 namespace app\models;
 use app\models\tables\UsersDB;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+class UserIdentity extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 {
     public $id;
     public $username;
@@ -15,7 +15,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      * {@inheritdoc}
      */
     public static function findIdentity($id)
-    {        
+    {
         if($user = UsersDB::findOne([$id])) {
             
             return new static([
@@ -48,8 +48,8 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
+        
         if($user = UsersDB::findOne(['login' => $username])) {
-            
             return new static([
                 'id' => $user->id,
                 'username' => $user->login,

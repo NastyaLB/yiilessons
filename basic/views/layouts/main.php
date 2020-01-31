@@ -35,13 +35,22 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+
+if($_SESSION[__id] == 1) {
+    $taskmenu = ['label' => 'Админка', 'items' => [
+        ['label' => 'Просмотр задач', 'url' => ['/task/']],
+        ['label' => 'Проверка задач', 'url' => ['/task-admin/']],
+        ['label' => 'Список юзеров', 'url' => ['/users-admin/']],
+            ]];
+} else $taskmenu = ['label' => 'Список задач', 'url' => ['/task/']];
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label' => 'Список задач', 'url' => ['/task/']],
+            $taskmenu,
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

@@ -22,8 +22,6 @@ use Yii;
 class TaskDB extends \yii\db\ActiveRecord
 {
 
-
-
     /**
      * {@inheritdoc}
      */

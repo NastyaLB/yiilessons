@@ -37,6 +37,11 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
+            'cache_about' => [
+                'class' => \yii\filters\PageCache::class,
+                'duration' => 15,
+                'only' => ['about']
+            ]
         ];
     }
 
@@ -153,7 +158,10 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        $patter = ['Шла Маша по шоссе и сосала сушку.', 'Карл у Клары украл кораллы.', 'Из-под топота копыт пыль по полю летит.', 'Выборка по уборщицам на роллс-ройсах нерепрезентативна.', 'У Сени и Сани в сенях сом с усами.'];
+        $model[title] = 'Коротко';
+        $model[content] = $patter[array_rand($patter,1)];
+        return $this->render('about', ['model' => $model]);
     }
     
     /**

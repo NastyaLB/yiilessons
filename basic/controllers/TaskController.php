@@ -11,27 +11,26 @@ use yii\web\Controller;
 use yii\db\ActiveRecord;
 use yii\base\Event;
 use app\models\tables\TaskDB;
+use yii\caching\TagDependency;
+use yii\web\UploadedFile;
 
 class TaskController extends Controller
 {
         
-    public function actionIndex() { 
+    public function actionIndex() {
         
         $model = new Tasksdbfilter();
         
-        //кэширование по месяцам
-        if($month = (int)\Yii::$app->request->get('month')) {
-            $cache = \Yii::$app->cache;
-            
-            $key = dataProvider.$month;
-            if($cache->exists($key)) {
-                $dataProvider = $cache->get($key);
-            } else {
-                $dataProvider = $model->search(\Yii::$app->request->queryParams);
-                $cache->set($key, $dataProvider, 30); 
-            }
-        } else $dataProvider = $model->search(\Yii::$app->request->queryParams);
+        $cache = \Yii::$app->cache;
+        $dataProvider = $model->search(\Yii::$app->request->queryParams);
         
+        $month = (int)\Yii::$app->request->get('month');
+        $tag = 'task-' . $month; // тэг        
+        $timel = 60;  // время жизни тэга
+        
+        Yii::$app->db->cache(function() use ($dataProvider) {return $dataProvider->prepare();}, $timel, new TagDependency(['tags' => $tag]) ); // Пометка тэгом кеша
+        
+        TagDependency::invalidate(Yii::$app->cache,$tag); // Очистка всех кешей с данным тэгом
         
         return $this->render('index', [
             'searchModel' => $model,
@@ -44,10 +43,10 @@ class TaskController extends Controller
         
         $model = new TaskModifyForm();  
         
-        //$model->on(TaskModifyForm::EVENT_TASK_SUCCESSFULLY_SAVED, $handler, '$model->responsible_id'); 
-        
         if ($model->load(Yii::$app->request->post()) && $model->createTask()) {
-            return $this->goBack();//goHome();
+            $model->newfile = UploadedFile::getInstances($model, 'newfile');
+            $model->save();
+            return $this->goBack('index.php?r=task');
         } else  $model->createTask();
         
         

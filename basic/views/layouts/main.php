@@ -28,6 +28,9 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
+//определение если в сессии язык(language)
+$LangSESS = Yii::$app->session->get(language);
+
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
@@ -36,6 +39,7 @@ AppAsset::register($this);
         ],
     ]);
 
+//
 if($_SESSION[__id] == 1) {
     $taskmenu = ['label' => 'Админка', 'items' => [
         ['label' => 'Просмотр задач', 'url' => ['/task/']],
@@ -44,9 +48,14 @@ if($_SESSION[__id] == 1) {
             ]];
 } else $taskmenu = ['label' => 'Список задач', 'url' => ['/task/']];
 
-    echo Nav::widget([
+echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
+            (!empty($LangSESS)) ? ( ($LangSESS == 'ru') ? 
+            (['label' => 'RU > EN', 'url' => ['/lang/en']]) : (
+            ['label' => 'EN > RU', 'url' => ['/lang/ru']]) ) : ( 
+            ['label' => 'RU', 'url' => ['/lang/ru']] ),
+            
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],

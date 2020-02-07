@@ -72,8 +72,8 @@ class Tasksdbfilter extends TaskDB
         
         //добавление фильтрации по месяцам
         if($month = (int)\Yii::$app->request->get('month')) {
-            $monthes = MonthBetweenBehavior::run($month);
-            $query->where(['between', 'deadline', $monthes[0], $monthes[1]]);
+            //$monthes = MonthBetweenBehavior::run($month);
+            $query->where('MONTH(deadline) = :month', [':month' => $month]);//->where(['between', 'deadline', $monthes[0], $monthes[1]]);
         } 
         //конец добавления фильтрации по месяцам
 

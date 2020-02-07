@@ -42,11 +42,11 @@ class TaskController extends Controller
     public function actionPage() { 
         
         $model = new TaskModifyForm();  
-        
+                
         if ($model->load(Yii::$app->request->post()) && $model->createTask()) {
             $model->newfile = UploadedFile::getInstances($model, 'newfile');
             $model->save();
-            return $this->goBack('index.php?r=task');
+            return $this->goBack('task');
         } else  $model->createTask();
         
         

@@ -4,14 +4,28 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    //'language' => 'ru',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log' /*'bootstrap'*/],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@upfiles' => '@app/upload/files',
     ],
     'components' => [
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => \yii\i18n\PhpMessageSource::class,
+                    'basePath' => '@app/message',
+                ],
+            ],
+        ],
+        /*
+        'bootstrap' => [
+          'class'  => \app\components\Bootstrap::class
+        ],*/
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'KZetEEsgraP6OLsMTn0kY3KcOQsn4aXk',

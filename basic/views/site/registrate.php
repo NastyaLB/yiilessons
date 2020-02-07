@@ -5,14 +5,15 @@
 /* @var $model app\models\LoginForm */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
 $this->title = 'Registrate';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
-    <h1><a href='index.php?r=site%2Flogin'>Login</a> / <?= Html::encode($this->title) ?></h1>
-
+    <h1><a href='<?=Url::to(['site/login'])?>'>Login</a> / <?= Html::encode($this->title) ?></h1>
+    
     <p><?=$model->messageTOuser?></p>
 
     <?php $form = ActiveForm::begin([

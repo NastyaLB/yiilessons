@@ -7,6 +7,11 @@ use yii\base\Model;
 use app\models\tables\TaskDB;
 use app\models\tables\UsersDB;
 use app\models\behaviors\TimeRightBehavior;
+use app\models\behaviors\TranslitBehavior;
+use yii\helpers\BaseFileHelper;
+use yii\web\UploadedFile;
+use yii\imagine\Image;
+
 
 /**
  * ContactForm is the model behind the contact form.
@@ -26,10 +31,13 @@ class TaskModifyForm extends Model
     public $responsible;
     public $responsible_list;
     public $creator;
+    public $newfile;
+    public $urlimg;
     public $messageTOuser;
     
     const EVENT_TASK_SUCCESSFULLY_SAVED = 'event_task_successfully_saved';
-
+    
+    
 
     /**
      * @return array the validation rules.
@@ -38,6 +46,7 @@ class TaskModifyForm extends Model
     {
         return [
             [['title', 'description', 'creator_id', 'responsible_id', 'deadline', 'modifytime'], 'required'],
+            [['newfile'], 'file',  'extensions' => 'jpg, png', 'maxFiles' => 0],//'skipOnEmpty' => false, 
         ];
     }
 
@@ -73,6 +82,11 @@ class TaskModifyForm extends Model
                 $this->deadline = $deadline;
                 $this->status_id = $taskdb->status_id;
                 
+                $path = '..\upload\files\small';
+                $this->urlimg = BaseFileHelper::findFiles ($path, ['filter'=> function ($path) {
+                    $urlTitle = TranslitBehavior::run($this->title);
+                    return stristr($path, $urlTitle);} ]);
+                //var_dump($this->urlimg);
             }
             $this->messageTOuser = 'Вы просматриваете и можете изменить информацию по задаче: '.$this->title;
             
@@ -95,7 +109,7 @@ class TaskModifyForm extends Model
                 $this->trigger(static::EVENT_TASK_SUCCESSFULLY_SAVED, $event);
             }
             $this->messageTOuser = 'Сформируйте свою задачу: ';
-        }
+        }  
         
         //выпадающий список ответственных
         $res_list0 = \Yii::$app->db->createCommand('select name from usersdb')->queryColumn();
@@ -109,5 +123,33 @@ class TaskModifyForm extends Model
         
     }
     
+    //название поля картинок
+    public function attributeLabels()
+    {
+        return [
+            'newfile' => Yii::t('app', 'newfile'),//'Прикрепленные файлы',
+        ];
+    }
     
+    //сохранение картинки. Сохраняет картинку по названию(title) Задачи с нумерацией
+    public function save() 
+    { 
+        $newtitle = TranslitBehavior::run($this->title);
+        
+        $path = '..\upload\files\small';
+        $imgcount = BaseFileHelper::findFiles ($path, ['filter'=> function ($path) {
+                    $urlTitle = TranslitBehavior::run($this->title);
+                    return stristr($path, $urlTitle);} ]);
+        $count = count($imgcount)+1;
+        foreach($this->newfile as $keyfile) {
+            $filepath = \Yii::getAlias("@upfiles/big/{$newtitle}___{$count}.{$keyfile->extension}"); //@app/upload/files/big/
+            
+            $thumbpath = \Yii::getAlias("@upfiles/small/{$newtitle}___{$count}.{$keyfile->extension}"); 
+            $keyfile->saveAs($filepath);
+            
+            Image::thumbnail(\Yii::getAlias($filepath), 100,100)->save($thumbpath);
+            
+            $count++;            
+        }        
+    }
 }

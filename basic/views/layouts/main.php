@@ -40,7 +40,7 @@ $LangSESS = Yii::$app->session->get(language);
     ]);
 
 //
-if($_SESSION[__id] == 1) {
+if(Yii::$app->session->get(id) == 1) {
     $taskmenu = ['label' => 'Админка', 'items' => [
         ['label' => 'Просмотр задач', 'url' => ['/task/']],
         ['label' => 'Проверка задач', 'url' => ['/task-admin/']],
@@ -51,10 +51,10 @@ if($_SESSION[__id] == 1) {
 echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            (!empty($LangSESS)) ? ( ($LangSESS == 'ru') ? 
-            (['label' => 'RU > EN', 'url' => ['/lang/en']]) : (
-            ['label' => 'EN > RU', 'url' => ['/lang/ru']]) ) : ( 
-            ['label' => 'RU', 'url' => ['/lang/ru']] ),
+            ['label' => 'Language', 'items' => [
+                ['label' => 'ru', url => ['site/lang', 'lang' => 'ru']],
+                ['label' => 'en', url => ['site/lang', 'lang' => 'en']],
+            ]],
             
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],

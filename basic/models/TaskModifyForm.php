@@ -86,7 +86,9 @@ class TaskModifyForm extends Model
                 $this->urlimg = BaseFileHelper::findFiles ($path, ['filter'=> function ($path) {
                     $urlTitle = TranslitBehavior::run($this->title);
                     return stristr($path, $urlTitle);} ]);
-                //var_dump($this->urlimg);
+                foreach($this->urlimg as $k => $m) {
+                    $this->urlimg[$k] = str_replace('..\\', '\\basic\\', $m);
+                }
             }
             $this->messageTOuser = 'Вы просматриваете и можете изменить информацию по задаче: '.$this->title;
             

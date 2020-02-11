@@ -47,7 +47,6 @@ class Tasksdbfilter extends TaskDB
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query, 
-           // 'pagination' => [ 'pageSize' => '3', ],
         ]);
 
         $this->load($params);
@@ -72,11 +71,10 @@ class Tasksdbfilter extends TaskDB
         
         //добавление фильтрации по месяцам
         if($month = (int)\Yii::$app->request->get('month')) {
-            
             $query->where('MONTH(deadline) = :month', [':month' => $month]);
         } 
         //конец добавления фильтрации по месяцам
 
         return $dataProvider;
-    }
+    }    
 }

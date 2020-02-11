@@ -105,20 +105,9 @@ class SiteController extends Controller
             return $this->goHome();
         } 
 
-        //$model->password = '';
         return $this->render('registrate', [
             'model' => $model,
         ]);
-        
-        /*
-        $handler = function(Event $event) {echo'Пользователь подписан на рассылку!';};
-        $model->on(RegForm::EVENT_USER_SUCCESSFULLY_SAVED, $handler); 
-        //1:28
-            
-        $model->createUser();
-        
-        return $this->render('registrate', ['model' => $model,]);
-        */
     }
 
     /**
@@ -164,15 +153,11 @@ class SiteController extends Controller
         return $this->render('about', ['model' => $model]);
     }
     
-    /**
-     * Displays hello world page.
-     *
-     * @return string
-    public function actionTasks()
-    {
-        return $this->render('tasks');
-    }
-     */
-
     
+    public function actionLang($lang)
+    {
+        Yii::$app->session->set('lang', $lang);
+       
+        $this->redirect(\Yii::$app->request->referrer);
+    }    
 }

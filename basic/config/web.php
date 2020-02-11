@@ -4,10 +4,10 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    //'language' => 'ru',
+    'language' => 'en',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log' /*'bootstrap'*/],
+    'bootstrap' => ['log', 'bootstrap'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -22,10 +22,10 @@ $config = [
                 ],
             ],
         ],
-        /*
+        
         'bootstrap' => [
           'class'  => \app\components\Bootstrap::class
-        ],*/
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'KZetEEsgraP6OLsMTn0kY3KcOQsn4aXk',
@@ -57,14 +57,17 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'task/month<month>' => 'task/index',
+                'task/page<id>' => 'task/page',
+                '<controller>/<action>' => '<controller>/<action>'
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];
